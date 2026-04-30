@@ -1,0 +1,78 @@
+# =========================
+# DEPENDENCIES
+# =========================
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# =========================
+# BUILD / DIST
+# =========================
+build/
+dist/
+client/build/
+server/build/
+
+# =========================
+# ENVIRONMENT VARIABLES
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+client/.env
+server/.env
+
+# =========================
+# LOG FILES
+# =========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# SYSTEM FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / EDITOR SETTINGS
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# CACHE / COVERAGE
+# =========================
+.cache/
+coverage/
+.nyc_output/
+
+# =========================
+# TEMP FILES
+# =========================
+tmp/
+temp/
+
+# =========================
+# SERVER UPLOADS (if temporary)
+# =========================
+server/uploads/
+
+# =========================
+# OS GENERATED FILES
+# =========================
+Desktop.ini
+
+# =========================
+# PACKAGE LOCKS (Optional — usually keep these)
+# Remove below if you WANT package-lock.json tracked
+# =========================
+# package-lock.json
+# yarn.lock
