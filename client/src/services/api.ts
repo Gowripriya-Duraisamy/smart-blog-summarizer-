@@ -2,7 +2,7 @@ import axios from "axios";
 import { SubmitTextRequest, SubmitTextResponse } from "../types/api";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: `${process.env.REACT_APP_API_URL}`,
   headers: {
     Accept: "application/json",
   },
