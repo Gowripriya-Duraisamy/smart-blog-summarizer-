@@ -6,7 +6,7 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // your React app URL
+    origin: "*", // your React app URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
