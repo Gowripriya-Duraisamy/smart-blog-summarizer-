@@ -4,7 +4,7 @@ export interface SubmitTextRequest {
 
 export interface SubmitTextResponse {
   success: boolean;
-  message: string;
+  message: SummaryResponse;
 }
 
 export interface SummarizeTextRequest {
@@ -13,4 +13,12 @@ export interface SummarizeTextRequest {
   summaryLength: string;
   tone: string;
   format: string;
+}
+
+export interface SummaryResponse {
+  summary: string | string[];
+  keyInsights: string[];
+  risks: string[];
+  sentiment: string;
+  takeaways: string[];
 }

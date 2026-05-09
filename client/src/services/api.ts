@@ -12,5 +12,5 @@ export const submitText = async (
   payload: SubmitTextRequest | FormData,
 ): Promise<SubmitTextResponse> => {
   const response = await apiClient.post("/api/summary", payload);
-  return response.data;
+  return response.data.message;
 };

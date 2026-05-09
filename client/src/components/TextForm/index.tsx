@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   TextField,
   Button,
@@ -15,30 +15,12 @@ import {
 import { useSubmitText } from "../../hooks/useSubmitText";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import SummaryResponse from "./Summary";
 
 type InputMode = "text" | "file";
 
 const TextForm = () => {
   const { handleSubmit, loading, summary } = useSubmitText();
-  const [displayedSummary, setDisplayedSummary] = useState("");
-
-  useEffect(() => {
-    if (!summary) return;
-
-    const words = summary.split(" ");
-    let index = 0;
-
-    const interval = setInterval(() => {
-      setDisplayedSummary(words.slice(0, index + 1).join(" "));
-      index++;
-
-      if (index >= words.length) {
-        clearInterval(interval);
-      }
-    }, 80); // Adjust speed here
-
-    return () => clearInterval(interval);
-  }, [summary]);
 
   const formik = useFormik<{
     mode: InputMode;
@@ -419,16 +401,16 @@ const TextForm = () => {
                 Summary Output
               </Typography>
 
-              {summary && (
+              {/* {summary && (
                 <Button
                   size="small"
                   variant="outlined"
-                  onClick={() => navigator.clipboard.writeText(summary)}
+                  onClick={() => navigator.clipboard.writeText()}
                   sx={{ borderRadius: 2 }}
                 >
                   Copy
                 </Button>
-              )}
+              )} */}
             </Box>
 
             <Divider />
@@ -454,7 +436,7 @@ const TextForm = () => {
                 },
               }}
             >
-              {summary ? (
+              {/* {summary ? (
                 <>
                   {displayedSummary}
                   {summary && displayedSummary !== summary && (
@@ -478,7 +460,8 @@ const TextForm = () => {
                     Choose your preferences and click “Generate Smart Summary”.
                   </Typography>
                 </Box>
-              )}
+              )} */}
+              <SummaryResponse summaryData={summary} wordSpeed={80} />
             </Box>
           </Paper>
         </Grid>

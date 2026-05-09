@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { submitText } from "../services/api";
-import { SummarizeTextRequest } from "../types/api";
+import { SummarizeTextRequest, SummaryResponse } from "../types/api";
 
 export const useSubmitText = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [summary, setSummary] = useState<string>("");
+  const [summary, setSummary] = useState<SummaryResponse | null>(null);
 
   const handleSubmit = async (values: SummarizeTextRequest) => {
     if (!values.file && (!values.text || !values.text.trim())) {
@@ -24,6 +24,11 @@ export const useSubmitText = () => {
         formData.append("tone", values.tone);
         formData.append("format", values.format);
         const response = await submitText(formData);
+        console.log("API response:", response);
+        console.log(
+          "Extracted summary from response:",
+          response.message.summary,
+        );
         setSummary(response.message);
       } else {
         const payload = { message: values.text!.trim(), ...values };
