@@ -1,7 +1,7 @@
-import TextForm from "./components/TextForm";
+import DocAssit from "./components";
 
 function App() {
-  return <TextForm />;
+  return <DocAssit />;
 }
 
 export default App;

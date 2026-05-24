@@ -1,6 +1,6 @@
 const pdf = require("pdf-parse");
 import mammoth from "mammoth";
-import { ExtractedResponse } from "../types/summary";
+import { ExtractedResponse } from "../types/summary.types";
 
 export const extractTextFromFile = async (
   file: any,

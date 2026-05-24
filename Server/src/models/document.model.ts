@@ -8,6 +8,11 @@ export interface IRAGDocument extends Document {
   category: string;
   tags: string[];
   summary: string;
+  keyInsights: string[];
+  risks: string[];
+  sentiment: "Positive" | "Neutral" | "Negative";
+  takeaways: string[];
+  suggestedQuestions: string[];
   fullText: string;
   createdAt: Date;
   updatedAt: Date;
@@ -50,6 +55,27 @@ const RAGDocumentSchema = new Schema<IRAGDocument>(
       type: String,
       required: true,
       trim: true,
+    },
+    keyInsights: {
+      type: [String],
+      default: [],
+    },
+    risks: {
+      type: [String],
+      default: [],
+    },
+    sentiment: {
+      type: String,
+      enum: ["Positive", "Neutral", "Negative"],
+      default: "Neutral",
+    },
+    takeaways: {
+      type: [String],
+      default: [],
+    },
+    suggestedQuestions: {
+      type: [String],
+      default: [],
     },
     fullText: {
       type: String,

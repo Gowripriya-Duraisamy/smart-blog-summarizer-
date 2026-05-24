@@ -1,9 +1,9 @@
 import OpenAI from "openai";
-import { SummaryFormat } from "../types/summary";
+import { SummaryFormat } from "../types/summary.types";
 import { chunkText } from "../utils/chunkText";
-import { createEmbedding } from "../service/embedChunks";
+import { createEmbedding } from "../service/embed.service";
 import { pineconeIndex } from "../config/pinecone";
-import { RAGDocumentModel } from "../models/document";
+import { RAGDocumentModel } from "../models/document.model";
 import { v4 as uuid } from "uuid";
 import { OPENAI_API_KEY } from "../config/consts";
 
@@ -34,11 +34,12 @@ STRICT RULES:
 - No extra text outside JSON
 - If format is "bullet points", summary must be an ARRAY of strings
 - If format is "paragraph", summary must be a STRING
-- keyInsights, risks, takeaways, tags must ALWAYS be arrays
+- keyInsights, risks, takeaways, tags, suggestedQuestions must ALWAYS be arrays
 - sentiment must be exactly one of:
   "Positive", "Neutral", "Negative"
 - category must be a single short string
 - tags must contain 3 to 8 concise keywords
+- suggestedQuestions must contain 4 to 6 specific user questions grounded in the document topic
 
 REQUIRED JSON:
 {
@@ -48,7 +49,8 @@ REQUIRED JSON:
   "sentiment": "Neutral",
   "takeaways": ["..."],
   "category": "General",
-  "tags": ["tag1", "tag2", "tag3"]
+  "tags": ["tag1", "tag2", "tag3"],
+  "suggestedQuestions": ["..."]
 }
 
 CATEGORY GUIDELINES:
@@ -91,6 +93,11 @@ ${inputData.text}
     const summaryText = Array.isArray(parsedResponse.summary)
       ? parsedResponse.summary.join("\n")
       : parsedResponse.summary;
+    const sentiment = ["Positive", "Neutral", "Negative"].includes(
+      parsedResponse.sentiment,
+    )
+      ? parsedResponse.sentiment
+      : "Neutral";
 
     // =====================================================
     // STEP 2: Insert Metadata into MongoDB
@@ -100,9 +107,14 @@ ${inputData.text}
       title: inputData.fileName,
       originalFileName: inputData.fileName,
       sourceType: inputData.type, // pdf/docx/txt
-      category: summaryText?.category || "general",
-      tags: summaryText?.tags || [],
+      category: parsedResponse.category || "general",
+      tags: parsedResponse.tags || [],
       summary: summaryText,
+      keyInsights: parsedResponse.keyInsights || [],
+      risks: parsedResponse.risks || [],
+      sentiment,
+      takeaways: parsedResponse.takeaways || [],
+      suggestedQuestions: parsedResponse.suggestedQuestions || [],
       fullText: inputData.text,
       processingStatus: "processing",
       createdAt: new Date(),
@@ -131,6 +143,7 @@ ${inputData.text}
           metadata: {
             fileId: documentId!,
             title: ragDocument.title,
+            documentName: ragDocument.originalFileName,
             originalFileName: ragDocument.originalFileName,
             sourceType: ragDocument.sourceType,
             category: ragDocument.category,
@@ -189,6 +202,7 @@ ${inputData.text}
         risks: [],
         sentiment: "Neutral",
         takeaways: [],
+        suggestedQuestions: [],
       },
     };
   }

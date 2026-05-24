@@ -24,16 +24,11 @@ export const useSubmitText = () => {
         formData.append("tone", values.tone);
         formData.append("format", values.format);
         const response = await submitText(formData);
-        console.log("API response:", response);
-        console.log(
-          "Extracted summary from response:",
-          response.message.summary,
-        );
-        setSummary(response.message);
+        setSummary(response);
       } else {
         const payload = { message: values.text!.trim(), ...values };
         const response = await submitText(payload);
-        setSummary(response.message);
+        setSummary(response);
       }
     } catch (err) {
       setError("Failed to submit. Try again.");

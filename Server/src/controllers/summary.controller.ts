@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getSummaryFromAI } from "../business/summary";
 import { extractTextFromFile } from "../utils/fileHandler";
-import { ExtractedResponse } from "../types/summary";
+import { ExtractedResponse } from "../types/summary.types";
 
 export const getSummary = async (req: Request, res: Response) => {
   try {
