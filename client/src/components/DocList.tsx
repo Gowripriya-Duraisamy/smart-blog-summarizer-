@@ -139,44 +139,50 @@ export default function DocumentsPanel({
   const [chatError, setChatError] = useState("");
   const initialDocumentSelected = useRef(false);
 
-  const loadDocuments = async (search = documentSearch) => {
-    try {
-      setLoading(true);
-      setError("");
+  const loadDocuments = useCallback(
+    async (search = documentSearch) => {
+      try {
+        setLoading(true);
+        setError("");
 
-      const data = await fetchDocuments(search);
-      setDocuments(data);
+        const data = await fetchDocuments(search);
+        setDocuments(data);
 
-      if (
-        !initialDocumentSelected.current &&
-        !search.trim() &&
-        data.length > 0
-      ) {
-        initialDocumentSelected.current = true;
-        onInitialDocumentSelect?.(data[0]);
+        if (
+          !initialDocumentSelected.current &&
+          !search.trim() &&
+          data.length > 0
+        ) {
+          initialDocumentSelected.current = true;
+          onInitialDocumentSelect?.(data[0]);
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load documents.");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      setError("Unable to load documents.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [onInitialDocumentSelect],
+  );
 
-  const loadChatDocuments = async (search = chatSearch) => {
-    try {
-      setChatLoading(true);
-      setChatError("");
+  const loadChatDocuments = useCallback(
+    async (search = chatSearch) => {
+      try {
+        setChatLoading(true);
+        setChatError("");
 
-      const data = await fetchDocuments(search);
-      setChatDocuments(data);
-    } catch (err) {
-      console.error(err);
-      setChatError("Unable to load chat documents.");
-    } finally {
-      setChatLoading(false);
-    }
-  };
+        const data = await fetchDocuments(search);
+        setChatDocuments(data);
+      } catch (err) {
+        console.error(err);
+        setChatError("Unable to load chat documents.");
+      } finally {
+        setChatLoading(false);
+      }
+    },
+    [setChatDocuments, setChatError],
+  );
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
