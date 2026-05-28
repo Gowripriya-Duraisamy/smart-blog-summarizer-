@@ -184,7 +184,7 @@ export default function DocumentsPanel({
     }, 250);
 
     return () => window.clearTimeout(timeoutId);
-  }, [documentSearch, refreshKey]);
+  }, [documentSearch, refreshKey, loadDocuments]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -192,7 +192,7 @@ export default function DocumentsPanel({
     }, 250);
 
     return () => window.clearTimeout(timeoutId);
-  }, [chatSearch, refreshKey]);
+  }, [chatSearch, refreshKey, loadChatDocuments]);
 
   const handleDocumentClick = (doc: DocumentItem) => {
     onDocumentClick?.(doc);
@@ -232,7 +232,9 @@ export default function DocumentsPanel({
           onChange={(event) => setDocumentSearch(event.target.value)}
           slotProps={{
             input: {
-              startAdornment: <SearchOutlined sx={{ color: "#64748b", mr: 1 }} />,
+              startAdornment: (
+                <SearchOutlined sx={{ color: "#64748b", mr: 1 }} />
+              ),
             },
           }}
           sx={{
@@ -370,7 +372,9 @@ export default function DocumentsPanel({
           onChange={(event) => setChatSearch(event.target.value)}
           slotProps={{
             input: {
-              startAdornment: <SearchOutlined sx={{ color: "#64748b", mr: 1 }} />,
+              startAdornment: (
+                <SearchOutlined sx={{ color: "#64748b", mr: 1 }} />
+              ),
             },
           }}
           sx={{
