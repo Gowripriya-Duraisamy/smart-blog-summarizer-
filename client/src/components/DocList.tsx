@@ -140,7 +140,7 @@ export default function DocumentsPanel({
   const initialDocumentSelected = useRef(false);
 
   const loadDocuments = useCallback(
-    async (search = documentSearch) => {
+    async (search: string) => {
       try {
         setLoading(true);
         setError("");
@@ -167,7 +167,7 @@ export default function DocumentsPanel({
   );
 
   const loadChatDocuments = useCallback(
-    async (search = chatSearch) => {
+    async (search: string) => {
       try {
         setChatLoading(true);
         setChatError("");
@@ -181,7 +181,7 @@ export default function DocumentsPanel({
         setChatLoading(false);
       }
     },
-    [setChatDocuments, setChatError],
+    [],
   );
 
   useEffect(() => {
