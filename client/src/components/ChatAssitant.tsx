@@ -451,7 +451,7 @@ export default function AIChatAssistant({
             }
             label={
               chatScope === "all"
-                ? "Searching entire DB"
+                ? "Searching all my documents"
                 : selectedDocumentIds.length
                 ? `Using ${selectedDocumentIds.length} document${
                     selectedDocumentIds.length > 1 ? "s" : ""

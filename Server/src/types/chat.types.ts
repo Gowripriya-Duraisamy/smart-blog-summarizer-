@@ -4,6 +4,7 @@ export interface ChatMessage {
 }
 
 export interface ChatRequest {
+  userId: string;
   question: string;
   documentIds: string[];
   scope?: "selected" | "all";

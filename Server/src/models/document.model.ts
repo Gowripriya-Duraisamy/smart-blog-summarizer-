@@ -2,6 +2,7 @@
 import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 export interface IRAGDocument extends Document {
+  userId: Types.ObjectId;
   title: string;
   originalFileName: string;
   sourceType: string;
@@ -24,6 +25,12 @@ export interface IRAGDocument extends Document {
  */
 const RAGDocumentSchema = new Schema<IRAGDocument>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     sourceType: {
       type: String,
       default: "uploaded_file",
@@ -108,6 +115,7 @@ RAGDocumentSchema.index({
 
 // Optional compound query optimization
 RAGDocumentSchema.index({
+  userId: 1,
   category: 1,
   createdAt: -1,
 });

@@ -15,21 +15,23 @@ export interface RetrievedChunk {
 
 export async function searchRelevantChunks(
   embedding: number[],
+  userId: string,
   documentIds: string[] = [],
   topK = 5,
 ): Promise<RetrievedChunk[]> {
-  const filter =
-    documentIds.length > 0
-      ? {
-          fileId: { $in: documentIds },
-        }
-      : undefined;
+  const filter: Record<string, any> = {
+    userId,
+  };
+
+  if (documentIds.length > 0) {
+    filter.fileId = { $in: documentIds };
+  }
 
   const results = await pineconeIndex.query({
     vector: embedding,
     topK,
     includeMetadata: true,
-    ...(filter ? { filter } : {}),
+    filter,
   });
 
   return (results.matches || []).map((match) => ({

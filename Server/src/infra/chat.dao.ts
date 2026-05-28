@@ -2,6 +2,7 @@ import { ChatSession } from "../models/chatSession.model";
 import { ChatMessage } from "../types/chat.types";
 
 export async function saveChatMessages(
+  userId: string,
   sessionId: string | undefined,
   documentIds: string[],
   newMessages: ChatMessage[],
@@ -9,6 +10,7 @@ export async function saveChatMessages(
 ) {
   if (!sessionId) {
     const session = await ChatSession.create({
+      userId,
       documentIds,
       scope,
       messages: newMessages,
@@ -17,8 +19,8 @@ export async function saveChatMessages(
     return session;
   }
 
-  const session = await ChatSession.findByIdAndUpdate(
-    sessionId,
+  const session = await ChatSession.findOneAndUpdate(
+    { _id: sessionId, userId },
     {
       $set: {
         documentIds,
@@ -33,6 +35,7 @@ export async function saveChatMessages(
 
   if (!session) {
     return ChatSession.create({
+      userId,
       documentIds,
       scope,
       messages: newMessages,
@@ -43,13 +46,15 @@ export async function saveChatMessages(
 }
 
 export async function listChatSessions(
+  userId: string,
   documentIds: string[],
   scope: "selected" | "all" = "selected",
 ) {
   const filter =
     scope === "all"
-      ? { scope: "all" }
+      ? { userId, scope: "all" }
       : {
+          userId,
           scope: "selected",
           documentIds: { $all: documentIds, $size: documentIds.length },
         };
@@ -60,6 +65,6 @@ export async function listChatSessions(
     .lean();
 }
 
-export async function getChatSession(sessionId: string) {
-  return ChatSession.findById(sessionId).lean();
+export async function getChatSession(sessionId: string, userId: string) {
+  return ChatSession.findOne({ _id: sessionId, userId }).lean();
 }

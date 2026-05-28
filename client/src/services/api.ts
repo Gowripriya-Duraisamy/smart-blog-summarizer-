@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  AuthSession,
   ChatRequest,
   ChatResponse,
   ChatSessionDetail,
@@ -7,6 +8,7 @@ import {
   SubmitTextRequest,
   SummaryResponse,
 } from "../types/api";
+import { getAuthToken } from "./auth";
 
 const apiClient = axios.create({
   baseURL: `${process.env.REACT_APP_API_URL || ""}`.trim(),
@@ -14,6 +16,23 @@ const apiClient = axios.create({
     Accept: "application/json",
   },
 });
+
+apiClient.interceptors.request.use((config) => {
+  const token = getAuthToken();
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+export const signInWithGoogle = async (
+  credential: string,
+): Promise<AuthSession> => {
+  const response = await apiClient.post("/api/auth/google", { credential });
+  return response.data;
+};
 
 export const submitText = async (
   payload: SubmitTextRequest | FormData,

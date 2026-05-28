@@ -4,6 +4,7 @@ import { FilterQuery } from "mongoose";
 import { IRAGDocument, RAGDocumentModel } from "../models/document.model";
 
 export interface ListDocumentsQuery {
+  userId: string;
   page?: number;
   limit?: number;
   search?: string;
@@ -14,8 +15,11 @@ export interface ListDocumentsQuery {
 }
 
 export class DocumentService {
-  async getDocumentSummary(documentId: string) {
-    const document = await RAGDocumentModel.findById(documentId).lean();
+  async getDocumentSummary(documentId: string, userId: string) {
+    const document = await RAGDocumentModel.findOne({
+      _id: documentId,
+      userId,
+    }).lean();
 
     if (!document) {
       return null;
@@ -48,7 +52,9 @@ export class DocumentService {
       selectedIds = [],
     } = query;
 
-    const filter: FilterQuery<IRAGDocument> = {};
+    const filter: FilterQuery<IRAGDocument> = {
+      userId: query.userId,
+    };
 
     // Full text search
     if (search?.trim()) {

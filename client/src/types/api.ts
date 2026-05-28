@@ -2,6 +2,18 @@ export interface SubmitTextRequest {
   message: string;
 }
 
+export interface AuthUser {
+  userId: string;
+  email: string;
+  name: string;
+  picture?: string;
+}
+
+export interface AuthSession {
+  token: string;
+  user: AuthUser;
+}
+
 export interface SubmitTextResponse {
   success: boolean;
   message: SummaryResponse;

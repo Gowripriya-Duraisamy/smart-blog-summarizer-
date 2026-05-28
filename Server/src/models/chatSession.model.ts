@@ -10,6 +10,12 @@ const MessageSchema = new Schema(
 
 const ChatSessionSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     documentIds: [{ type: String, required: true }],
     scope: {
       type: String,
@@ -20,5 +26,7 @@ const ChatSessionSchema = new Schema(
   },
   { timestamps: true },
 );
+
+ChatSessionSchema.index({ userId: 1, scope: 1, updatedAt: -1 });
 
 export const ChatSession = mongoose.model("ChatSession", ChatSessionSchema);

@@ -23,6 +23,7 @@ import {
   ArticleOutlined,
   SearchOutlined,
 } from "@mui/icons-material";
+import { getAuthHeaders } from "../services/auth";
 
 export interface DocumentItem {
   id: string;
@@ -86,6 +87,7 @@ const fetchDocuments = async (search = ""): Promise<DocumentItem[]> => {
     headers: {
       Accept: "application/json",
       "Cache-Control": "no-cache",
+      ...getAuthHeaders(),
     },
   });
 
@@ -465,7 +467,7 @@ export default function DocumentsPanel({
           <MenuItem value="selected">
             Selected Documents ({chatDocumentIds.length})
           </MenuItem>
-          <MenuItem value="all">Entire DB Search</MenuItem>
+          <MenuItem value="all">All My Documents</MenuItem>
         </Select>
         <Typography
           variant="caption"
@@ -474,7 +476,7 @@ export default function DocumentsPanel({
         >
           {chatScope === "selected"
             ? "Ask questions about the checked documents."
-            : "Search across all indexed documents."}
+            : "Search across all documents you uploaded."}
         </Typography>
       </Box>
     </Box>

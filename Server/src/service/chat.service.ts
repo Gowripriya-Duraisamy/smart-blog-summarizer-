@@ -10,6 +10,7 @@ import {
   saveChatMessages,
 } from "../infra/chat.dao";
 import { ChatRequest, ChatResponse } from "../types/chat.types";
+import { RAGDocumentModel } from "../models/document.model";
 
 export async function askQuestion(payload: ChatRequest): Promise<ChatResponse> {
   const {
@@ -20,19 +21,36 @@ export async function askQuestion(payload: ChatRequest): Promise<ChatResponse> {
     sessionId,
     topK = 5,
   } = payload;
+  const { userId } = payload;
 
   if (!question?.trim()) {
     throw new Error("Question is required");
+  }
+
+  if (!userId) {
+    throw new Error("Authentication is required");
   }
 
   if (scope === "selected" && !documentIds?.length) {
     throw new Error("At least one document ID is required");
   }
 
+  if (scope === "selected") {
+    const ownedDocumentCount = await RAGDocumentModel.countDocuments({
+      _id: { $in: documentIds },
+      userId,
+    });
+
+    if (ownedDocumentCount !== documentIds.length) {
+      throw new Error("One or more selected documents are not available");
+    }
+  }
+
   const embedding = await createEmbedding(question);
 
   const chunks = await searchRelevantChunks(
     embedding,
+    userId,
     scope === "all" ? [] : documentIds,
     topK,
   );
@@ -40,9 +58,10 @@ export async function askQuestion(payload: ChatRequest): Promise<ChatResponse> {
   if (!chunks.length || chunks[0].score < 0.5) {
     const answer =
       scope === "all"
-        ? "I couldn't find relevant information in the document database."
+        ? "I couldn't find relevant information in your uploaded documents."
         : "I couldn't find relevant information in the selected documents.";
     const session = await saveChatMessages(
+      userId,
       sessionId,
       documentIds,
       [
@@ -64,6 +83,7 @@ export async function askQuestion(payload: ChatRequest): Promise<ChatResponse> {
   const answer = await generateAnswer(prompt);
 
   const session = await saveChatMessages(
+    userId,
     sessionId,
     documentIds,
     [
@@ -90,10 +110,11 @@ export async function askQuestion(payload: ChatRequest): Promise<ChatResponse> {
 }
 
 export async function getSessionsForScope(
+  userId: string,
   documentIds: string[],
   scope: "selected" | "all" = "selected",
 ) {
-  const sessions = await listChatSessions(documentIds, scope);
+  const sessions = await listChatSessions(userId, documentIds, scope);
 
   return sessions.map((session: any) => {
     const firstUserMessage = session.messages?.find(
@@ -111,8 +132,8 @@ export async function getSessionsForScope(
   });
 }
 
-export async function getSessionById(sessionId: string) {
-  const session = await getChatSession(sessionId);
+export async function getSessionById(sessionId: string, userId: string) {
+  const session = await getChatSession(sessionId, userId);
 
   if (!session) {
     return null;

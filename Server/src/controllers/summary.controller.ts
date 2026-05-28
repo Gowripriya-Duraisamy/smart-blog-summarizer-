@@ -2,12 +2,17 @@ import { Request, Response } from "express";
 import { getSummaryFromAI } from "../business/summary";
 import { extractTextFromFile } from "../utils/fileHandler";
 import { ExtractedResponse } from "../types/summary.types";
+import { AuthenticatedRequest } from "../middleware/auth";
+
+type UploadRequest = Request & {
+  file?: any;
+};
 
 export const getSummary = async (req: Request, res: Response) => {
   try {
     console.log("Received request for summary generation");
     const textInput = req.body.text;
-    const file = req.file;
+    const file = (req as UploadRequest).file;
 
     let finalText: ExtractedResponse = { text: "", type: "txt" };
 
@@ -28,6 +33,7 @@ export const getSummary = async (req: Request, res: Response) => {
       });
     }
     const inputData = {
+      userId: (req as AuthenticatedRequest).user.userId,
       fileName: file?.originalname || "text_input",
       text: finalText.text,
       length: req.body.length || "medium",

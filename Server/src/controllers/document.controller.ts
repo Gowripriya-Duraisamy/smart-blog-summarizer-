@@ -3,6 +3,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { DocumentService } from "../service/document.service";
+import { AuthenticatedRequest } from "../middleware/auth";
 
 const documentService = new DocumentService();
 
@@ -28,7 +29,10 @@ export const getDocumentSummary = async (req: Request, res: Response) => {
       });
     }
 
-    const result = await documentService.getDocumentSummary(documentId);
+    const result = await documentService.getDocumentSummary(
+      documentId,
+      (req as AuthenticatedRequest).user.userId,
+    );
 
     if (!result) {
       return res.status(404).json({
@@ -63,6 +67,7 @@ export const listDocuments = async (req: Request, res: Response) => {
         : [];
 
     const result = await documentService.listDocuments({
+      userId: (req as AuthenticatedRequest).user.userId,
       page,
       limit,
       search: req.query.search as string,

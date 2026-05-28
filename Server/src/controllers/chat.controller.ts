@@ -4,10 +4,14 @@ import {
   getSessionById,
   getSessionsForScope,
 } from "../service/chat.service";
+import { AuthenticatedRequest } from "../middleware/auth";
 
 export async function chatController(req: Request, res: Response) {
   try {
-    const result = await askQuestion(req.body);
+    const result = await askQuestion({
+      ...req.body,
+      userId: (req as AuthenticatedRequest).user.userId,
+    });
     res.json(result);
   } catch (error: any) {
     res.status(400).json({
@@ -29,7 +33,11 @@ export async function chatSessionsController(req: Request, res: Response) {
       return res.json([]);
     }
 
-    const sessions = await getSessionsForScope(documentIds, scope);
+    const sessions = await getSessionsForScope(
+      (req as AuthenticatedRequest).user.userId,
+      documentIds,
+      scope,
+    );
     res.json(sessions);
   } catch (error: any) {
     res.status(400).json({
@@ -48,7 +56,10 @@ export async function chatSessionController(req: Request, res: Response) {
       });
     }
 
-    const session = await getSessionById(rawSessionId);
+    const session = await getSessionById(
+      rawSessionId,
+      (req as AuthenticatedRequest).user.userId,
+    );
 
     if (!session) {
       return res.status(404).json({

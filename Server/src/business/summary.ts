@@ -104,6 +104,7 @@ ${inputData.text}
     // =====================================================
 
     const ragDocument = await RAGDocumentModel.create({
+      userId: inputData.userId,
       title: inputData.fileName,
       originalFileName: inputData.fileName,
       sourceType: inputData.type, // pdf/docx/txt
@@ -142,6 +143,7 @@ ${inputData.text}
           values: embedding,
           metadata: {
             fileId: documentId!,
+            userId: inputData.userId,
             title: ragDocument.title,
             documentName: ragDocument.originalFileName,
             originalFileName: ragDocument.originalFileName,

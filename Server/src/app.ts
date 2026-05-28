@@ -3,6 +3,8 @@ import routes from "./routes";
 import cors from "cors";
 import chatRoutes from "./routes/chat.routes";
 import documentRoutes from "./routes/document.routes";
+import authRoutes from "./routes/auth.routes";
+import { requireAuth } from "./middleware/auth";
 
 const app: Application = express();
 
@@ -23,8 +25,9 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api", routes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/documents", documentRoutes);
+app.use("/api/chat", requireAuth, chatRoutes);
+app.use("/api/documents", requireAuth, documentRoutes);
 
 export default app;
